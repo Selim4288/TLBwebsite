@@ -8,9 +8,9 @@ import Footer from "@/components/footer"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Tech Leads BD Ltd. - Leading Software Development Company",
+  title: "Tech Leads BD Ltd. - ERP & POS Software for Bangladesh",
   description:
-    "Tech Leads BD Ltd. is a leading software development company providing innovative ERP, POS, Accounting, and custom software solutions for businesses worldwide.",
+    "Complete ERP, POS, Accounting, Inventory & custom business software solutions for enterprises in Bangladesh. Cloud-based, secure, and affordable.",
 }
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-background">
       <body className={inter.className}>
         <Header />
         <main>{children}</main>
