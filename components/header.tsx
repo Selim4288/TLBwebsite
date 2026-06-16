@@ -33,14 +33,13 @@ function NavDropdown({ label, items, width = "w-48" }: NavDropdownProps) {
 
   return (
     <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <button className="flex items-center gap-1 font-medium text-gray-800 hover:text-emerald-600 transition-colors">
+      <button className="flex items-center gap-1 font-medium text-foreground hover:text-blue-600 transition-colors">
         {label}
         <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
-      {/* invisible bridge fills the mt-2 gap so cursor doesn't leave the hover zone */}
       <div className="absolute left-0 top-full h-2 w-full" />
       <div
-        className={`absolute left-0 top-full mt-2 ${width} bg-white shadow-lg rounded-md border border-gray-100 z-50 transition-all duration-150 ${
+        className={`absolute left-0 top-full mt-2 ${width} bg-white shadow-lg rounded-md border border-border z-50 transition-all duration-150 ${
           open ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none -translate-y-1"
         }`}
       >
@@ -49,8 +48,8 @@ function NavDropdown({ label, items, width = "w-48" }: NavDropdownProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`block px-4 py-2 text-sm hover:bg-gray-50 ${
-                item.highlight ? "font-medium text-emerald-600 border-t border-gray-100 mt-2 pt-2" : ""
+              className={`block px-4 py-2 text-sm hover:bg-secondary ${
+                item.highlight ? "font-medium text-blue-600 border-t border-border mt-2 pt-2" : ""
               }`}
             >
               {item.label}
@@ -91,54 +90,51 @@ const serviceItems: DropdownItem[] = [
 
 export default function Header() {
   return (
-    <>
-      <div className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-4 text-center">
-        <div className="container mx-auto flex justify-center items-center gap-2">
-          <span>✨ Transform Your Business with AI-Powered Solutions - Limited Time Offer!</span>
-          <Button size="sm" className="bg-white hover:bg-gray-100 text-purple-600 font-medium rounded-md">
-            Get Started
-          </Button>
-        </div>
-      </div>
-      <header className="w-full bg-white py-4 px-4 border-b">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-1">
-            <Image src="/logo.svg" alt="Tech Leads BD Ltd Logo" width={150} height={50} className="h-12 w-auto" />
+    <header className="sticky top-0 w-full bg-white/95 backdrop-blur-md border-b border-border z-50 shadow-sm">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          <Link href="/" className="flex items-center gap-1 flex-shrink-0">
+            <Image src="/logo.svg" alt="Tech Leads BD Ltd Logo" width={150} height={50} className="h-10 w-auto" />
           </Link>
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors">
+            <Link href="/" className="font-medium text-foreground hover:text-blue-600 transition-colors text-sm">
               Home
             </Link>
             <NavDropdown label="About Us" items={aboutItems} />
-            <NavDropdown label="Products" items={productItems} width="w-56" />
+            <NavDropdown label="Software" items={productItems} width="w-56" />
             <NavDropdown label="Services" items={serviceItems} width="w-56" />
-            <Link href="/blog" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors">
+            <Link href="/blog" className="font-medium text-foreground hover:text-blue-600 transition-colors text-sm">
               Blog
             </Link>
-            <Link href="/contact" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors">
-              Contact Us
+            <Link href="/contact" className="font-medium text-foreground hover:text-blue-600 transition-colors text-sm">
+              Contact
             </Link>
           </nav>
-          <button className="md:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-gray-800"
-            >
-              <line x1="4" x2="20" y1="12" y2="12" />
-              <line x1="4" x2="20" y1="6" y2="6" />
-              <line x1="4" x2="20" y1="18" y2="18" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-4">
+            <Button className="hidden sm:inline-flex bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium h-auto">
+              Get Free Demo
+            </Button>
+            <button className="md:hidden p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-foreground"
+              >
+                <line x1="4" x2="20" y1="12" y2="12" />
+                <line x1="4" x2="20" y1="6" y2="6" />
+                <line x1="4" x2="20" y1="18" y2="18" />
+              </svg>
+            </button>
+          </div>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   )
 }
