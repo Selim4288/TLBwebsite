@@ -1,92 +1,376 @@
+"use client"
+
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Play, ArrowRight } from "lucide-react"
+import { ArrowRight, Check, Users, Building2, ShoppingCart, Calculator, Briefcase, Package, HeartPulse, Pill, Store, Code, Box as BoxIcon, UsersRound, DollarSign, ShoppingCart as ShoppingCartIcon, ChartLine as LineChart, Factory, Shield, Cloud, Settings, Headphones, Zap, Layers, LockKeyhole, UserCog, ChartPie as PieChartIcon, QrCode, Smartphone, Database, Plug, ChevronLeft, ChevronRight, Star, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+// Trust Counter Component with Animation
+function TrustCounter({ end, label, suffix = "+" }: { end: number; label: string; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => observer.disconnect()
+  }, [isVisible])
+
+  useEffect(() => {
+    if (!isVisible) return
+
+    const duration = 2000
+    const steps = 60
+    const increment = end / steps
+    let current = 0
+
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= end) {
+        setCount(end)
+        clearInterval(timer)
+      } else {
+        setCount(Math.floor(current))
+      }
+    }, duration / steps)
+
+    return () => clearInterval(timer)
+  }, [isVisible, end])
+
+  return (
+    <div ref={ref} className="text-center">
+      <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+        {count}{suffix}
+      </div>
+      <div className="text-blue-100 text-sm md:text-base">{label}</div>
+    </div>
+  )
+}
+
+// Testimonial data
+const testimonials = [
+  {
+    name: "Rahman Ahmed",
+    business: "Super Shop Owner",
+    review: "Tech Leads BD ERP system transformed our entire business operations. Inventory management became so easy and we can now track everything in real-time. Highly recommended!",
+    rating: 5,
+    location: "Dhaka"
+  },
+  {
+    name: "Fatima Begum",
+    business: "Garments Factory",
+    review: "Their Garments ERP is specifically designed for our industry. Production planning, material tracking, and quality control - everything in one system. Amazing support team!",
+    rating: 5,
+    location: "Chittagong"
+  },
+  {
+    name: "Mohammad Ali",
+    business: "Pharmacy Chain",
+    review: "We've been using their Pharmacy Software for 3 years. The expiry tracking feature alone saved us thousands. Best software investment we've made.",
+    rating: 5,
+    location: "Sylhet"
+  },
+  {
+    name: "Karim Hossain",
+    business: "Electronics Distributor",
+    review: "The POS system helped us increase efficiency by 40%. Customer support is excellent and they customized the software exactly to our needs.",
+    rating: 5,
+    location: "Dhaka"
+  },
+]
+
 export default function Home() {
-  const products = [
-    { title: "ERP Solutions", description: "Comprehensive enterprise resource planning systems for businesses of all sizes.", link: "/products/erp-solutions" },
-    { title: "POS Systems", description: "Advanced point of sale systems for retail, restaurant, and service industries.", link: "/products/pos-systems" },
-    { title: "Accounting Software", description: "Powerful accounting tools to manage finances, invoicing, and financial reporting.", link: "/products/accounting-software" },
-    { title: "HR Payroll Software", description: "Complete HR and payroll management solution for streamlined workforce management.", link: "/products/hr-payroll" },
-    { title: "CRM Software", description: "Customer relationship management tools to improve customer engagement and sales.", link: "/products/crm-software" },
-    { title: "Inventory Software", description: "Real-time inventory tracking and management for optimized stock control.", link: "/products/inventory-management" },
-    { title: "Hospital Management", description: "Integrated healthcare management solution for hospitals and medical facilities.", link: "/products/hospital-management" },
-    { title: "School Management", description: "Complete education management solution for schools and educational institutions.", link: "/products/school-management" },
-    { title: "Restaurant Management", description: "All-in-one solution for restaurants, cafes, and food service businesses.", link: "/products/restaurant-management" },
-    { title: "Hotel Management", description: "Comprehensive hotel and hospitality management software solution.", link: "/products/hotel-management" },
-    { title: "Garments ERP", description: "Specialized ERP solution for garment manufacturing and textile industries.", link: "/products/garments-erp" },
-    { title: "Real Estate Management", description: "Complete solution for real estate agencies, property managers, and developers.", link: "/products/real-estate-management" },
+  const [activeTestimonial, setActiveTestimonial] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const softwareCategories = [
+    { title: "ERP Software", description: "Complete enterprise resource planning for your entire business", icon: Building2, link: "/products/erp-solutions" },
+    { title: "POS Software", description: "Modern point of sale system for retail businesses", icon: ShoppingCart, link: "/products/pos-systems" },
+    { title: "Accounting Software", description: "Professional accounting and financial management", icon: Calculator, link: "/products/accounting-software" },
+    { title: "HR & Payroll", description: "Human resources and payroll management system", icon: Briefcase, link: "/products/hr-payroll" },
+    { title: "CRM Software", description: "Customer relationship management for sales teams", icon: Users, link: "/products/crm-software" },
+    { title: "Garments ERP", description: "Specialized ERP for garments and textile industry", icon: Factory, link: "/products/garments-erp" },
+    { title: "Hospital Management", description: "Comprehensive hospital and clinic management", icon: HeartPulse, link: "/products/hospital-management" },
+    { title: "Pharmacy Software", description: "Complete pharmacy management with expiry tracking", icon: Pill, link: "/products/medicine-shop" },
+    { title: "Super Shop Management", description: "All-in-one solution for super shops", icon: Store, link: "/products/super-shop" },
+    { title: "Custom ERP Solutions", description: "Tailored software for your unique business needs", icon: Code, link: "/contact" },
+  ]
+
+  const erpModules = [
+    { title: "Inventory Management", description: "Real-time stock tracking and control", icon: Package },
+    { title: "HR & Payroll", description: "Employee management and salary processing", icon: UsersRound },
+    { title: "Accounting System", description: "Complete financial accounting", icon: DollarSign },
+    { title: "Sales & Purchase", description: "Order processing and procurement", icon: ShoppingCartIcon },
+    { title: "Production Management", description: "Manufacturing and production planning", icon: BoxIcon },
+    { title: "CRM System", description: "Customer relationship and sales pipeline", icon: Users },
+    { title: "POS System", description: "Point of sale for retail operations", icon: Calculator },
+    { title: "Reports & Analytics", description: "Business intelligence dashboards", icon: LineChart },
+  ]
+
+  const industries = [
+    { name: "Retail Business", icon: Store },
+    { name: "Wholesale Business", icon: Package },
+    { name: "Garments Industry", icon: Factory },
+    { name: "Pharmacy Shops", icon: Pill },
+    { name: "Super Shop / Dept Store", icon: ShoppingCart },
+    { name: "Manufacturing", icon: BoxIcon },
+    { name: "Electronics Shop", icon: Smartphone },
+    { name: "Service Businesses", icon: Headphones },
+  ]
+
+  const whyChooseUs = [
+    { title: "Secure & Reliable", description: "Enterprise-grade security with 99.9% uptime guarantee", icon: Shield },
+    { title: "Cloud Based ERP", description: "Access your business data from anywhere, anytime", icon: Cloud },
+    { title: "Fully Customizable", description: "Tailored solutions that fit your unique requirements", icon: Settings },
+    { title: "24/7 Support", description: "Dedicated technical support team available round the clock", icon: Headphones },
+    { title: "Fast Performance", description: "Optimized for speed with quick load times", icon: Zap },
+    { title: "Scalable Architecture", description: "Grows with your business needs seamlessly", icon: Layers },
+  ]
+
+  const keyFeatures = [
+    { title: "Multi User System", description: "Multiple users with role-based permissions", icon: Users },
+    { title: "Real-time Reports", description: "Live dashboards and analytics", icon: PieChartIcon },
+    { title: "Barcode System", description: "Integrated barcode scanning and printing", icon: QrCode },
+    { title: "Mobile Friendly", description: "Responsive design for all devices", icon: Smartphone },
+    { title: "Auto Backup", description: "Automatic data backup and recovery", icon: Database },
+    { title: "Advanced Security", description: "Encryption and access control", icon: LockKeyhole },
+    { title: "Role Based Access", description: "Granular permission management", icon: UserCog },
+    { title: "API Integration", description: "Connect with third-party services", icon: Plug },
+  ]
+
+  const blogPosts = [
+    {
+      title: "How ERP Systems Transform Business Operations",
+      excerpt: "Discover how implementing an ERP system can streamline your operations and boost productivity.",
+      date: "June 15, 2026",
+      image: "/placeholder.svg?height=200&width=400",
+    },
+    {
+      title: "Top 10 Features of Modern POS Systems",
+      excerpt: "Essential features every business should look for when choosing a point of sale solution.",
+      date: "June 10, 2026",
+      image: "/placeholder.svg?height=200&width=400",
+    },
+    {
+      title: "Digital Transformation in Manufacturing",
+      excerpt: "How Bangladesh's manufacturing sector is embracing digital tools for growth.",
+      date: "June 5, 2026",
+      image: "/placeholder.svg?height=200&width=400",
+    },
   ]
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Decorative dots */}
-      <div className="absolute right-0 top-1/4 flex flex-col gap-2 z-10">
-        {Array(10)
-          .fill(0)
-          .map((_, i) => (
-            <div key={i} className="w-2 h-2 rounded-full bg-emerald-500"></div>
-          ))}
-      </div>
-
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-white to-green-50 py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="z-10">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                <span>Best </span>
-                <span className="text-emerald-500">Software Development</span>
-                <br />
-                <span>Company </span>
-                <span>To Architect The Dream</span>
-                <br />
-                <span>For </span>
-                <span className="text-emerald-500">Next Generation</span>
-              </h1>
-              <p className="text-gray-700 mb-8 text-lg">
-                Tech Leads BD Ltd. is a leading software development company providing innovative ERP, POS, Accounting,
-                and custom software solutions for businesses worldwide.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-md">
-                  Get Started
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-emerald-500 text-emerald-500 hover:bg-emerald-50 px-6 py-2 rounded-md"
-                >
-                  Our Services
-                </Button>
+      <section className="relative min-h-[90vh] flex items-center bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+        </div>
+
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl" />
+
+        <div className="container mx-auto px-4 py-20 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="text-white">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <span className="text-sm text-blue-100">Trusted by 500+ Businesses in Bangladesh</span>
               </div>
-              <div className="flex items-center gap-4 mt-8">
-                <Image src="/placeholder.svg?height=40&width=40" alt="ISO" width={40} height={40} className="h-10" />
-                <Image src="/placeholder.svg?height=40&width=40" alt="BASIS" width={40} height={40} className="h-10" />
-                <Image src="/placeholder.svg?height=40&width=40" alt="BACCO" width={40} height={40} className="h-10" />
-                <Image src="/placeholder.svg?height=40&width=40" alt="Envato" width={40} height={40} className="h-10" />
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                Complete ERP, POS & CRM Software Solutions for{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-300">
+                  Growing Businesses
+                </span>
+              </h1>
+
+              <p className="text-lg md:text-xl text-blue-100 mb-8 leading-relaxed">
+                Manage your business smartly with our all-in-one ERP system including inventory, accounting, HR, sales, and CRM.
+                Streamlined operations, better insights, faster growth.
+              </p>
+
+              <div className="flex flex-wrap gap-4 mb-12">
+                <Link href="/contact">
+                  <Button size="lg" className="bg-white text-blue-900 hover:bg-blue-50 text-lg px-8 py-6 rounded-xl shadow-xl shadow-blue-900/30 transition-all hover:scale-105">
+                    Get Free Demo
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link href="/products">
+                  <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-8 py-6 rounded-xl backdrop-blur-sm transition-all hover:scale-105">
+                    View Software
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <TrustCounter end={500} label="Happy Clients" />
+                <TrustCounter end={10} label="Industries" suffix="+" />
+                <TrustCounter end={1200} label="Projects Done" />
+                <TrustCounter end={24} label="Support" suffix="/7" />
               </div>
             </div>
-            <div className="relative">
-              <div className="relative rounded-lg overflow-hidden">
-                <Image
-                  src="/placeholder.svg?height=600&width=800"
-                  alt="Tech Leads BD Team"
-                  width={800}
-                  height={600}
-                  className="w-full h-auto rounded-lg"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <button className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                    <Play className="w-6 h-6 text-emerald-500 ml-1" />
-                  </button>
+
+            {/* Right Content - Dashboard Mockup */}
+            <div className="relative hidden lg:block">
+              <div className="relative">
+                {/* Main Dashboard Card */}
+                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-4 mb-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-3 h-3 rounded-full bg-red-500" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-blue-500/20 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-blue-400">৳12.5M</div>
+                        <div className="text-xs text-slate-400">Revenue</div>
+                      </div>
+                      <div className="bg-green-500/20 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-green-400">847</div>
+                        <div className="text-xs text-slate-400">Orders</div>
+                      </div>
+                      <div className="bg-purple-500/20 rounded-lg p-3 text-center">
+                        <div className="text-2xl font-bold text-purple-400">156</div>
+                        <div className="text-xs text-slate-400">Products</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-32 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-xl flex items-center justify-center">
+                    <LineChart className="w-16 h-16 text-blue-300/50" />
+                  </div>
                 </div>
-                <div className="absolute bottom-0 right-0 bg-emerald-500 text-white p-4 rounded-tl-lg">
-                  <div className="text-4xl font-bold">10+</div>
-                  <div className="text-sm">
-                    Years of
-                    <br />
-                    Experience
+
+                {/* Floating Cards */}
+                <div className="absolute -top-4 -right-4 bg-white rounded-xl p-4 shadow-xl transform -rotate-6 hover:rotate-0 transition-transform">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <Check className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-slate-800">Payment Received</div>
+                      <div className="text-xs text-slate-500">৳ 25,500.00</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-4 shadow-xl transform rotate-6 hover:rotate-0 transition-transform">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <Package className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-slate-800">Stock Updated</div>
+                      <div className="text-xs text-slate-500">+150 items added</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/50 animate-bounce">
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
+            <div className="w-1.5 h-3 bg-white/50 rounded-full" />
+          </div>
+        </div>
+      </section>
+
+      {/* Company Intro Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-block bg-emerald-100 text-emerald-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+                About Our Company
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
+                Who We Are
+              </h2>
+              <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                <strong className="text-slate-800">TECH LEADS BD LTD</strong> is a leading ERP, POS, CRM and custom software company providing smart business automation solutions. We help businesses digitalize their operations with cutting-edge technology and dedicated support.
+              </p>
+              <p className="text-slate-600 mb-8">
+                With over a decade of experience, we've successfully delivered 1200+ projects across 10+ industries, helping businesses streamline operations and achieve remarkable growth.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {[
+                  { icon: Building2, label: "ERP Solutions" },
+                  { icon: ShoppingCart, label: "POS Systems" },
+                  { icon: Calculator, label: "Accounting Software" },
+                  { icon: Code, label: "Custom Development" },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <span className="font-medium text-slate-700">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/about/company-profile">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+                  Learn More About Us
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white transform hover:scale-105 transition-transform">
+                    <Users className="w-10 h-10 mb-3" />
+                    <div className="text-3xl font-bold">500+</div>
+                    <div className="text-blue-100">Active Clients</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white transform hover:scale-105 transition-transform">
+                    <Headphones className="w-10 h-10 mb-3" />
+                    <div className="text-3xl font-bold">24/7</div>
+                    <div className="text-emerald-100">Support Available</div>
+                  </div>
+                </div>
+                <div className="space-y-4 mt-8">
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white transform hover:scale-105 transition-transform">
+                    <Package className="w-10 h-10 mb-3" />
+                    <div className="text-3xl font-bold">30+</div>
+                    <div className="text-purple-100">Software Products</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white transform hover:scale-105 transition-transform">
+                    <Clock className="w-10 h-10 mb-3" />
+                    <div className="text-3xl font-bold">10+</div>
+                    <div className="text-orange-100">Years Experience</div>
                   </div>
                 </div>
               </div>
@@ -95,233 +379,408 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-16 bg-white">
+      {/* Software Categories Section */}
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Services</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              We provide a wide range of IT and digital services to help businesses grow and succeed in the digital
-              world.
+          <div className="text-center mb-16">
+            <div className="inline-block bg-blue-100 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+              Our Software Solutions
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Software Categories
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Comprehensive business software solutions designed for every industry and business need
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Software Development",
-                description:
-                  "Custom software solutions tailored to your business needs, from enterprise applications to specialized industry software.",
-                icon: "💻",
-                link: "/services-overview#software-development",
-              },
-              {
-                title: "Website Design & Development",
-                description:
-                  "Professional website design and development services that create stunning, functional, and user-friendly websites.",
-                icon: "🌐",
-                link: "/services-overview#website-design-development",
-              },
-              {
-                title: "Mobile App Development",
-                description:
-                  "Cutting-edge mobile applications for iOS and Android platforms that engage users and drive business growth.",
-                icon: "📱",
-                link: "/services-overview#mobile-app-development",
-              },
-              {
-                title: "Graphic Design",
-                description:
-                  "Creative graphic design services that communicate your brand message effectively and leave a lasting impression.",
-                icon: "🎨",
-                link: "/services-overview#graphic-design",
-              },
-              {
-                title: "Digital Marketing",
-                description:
-                  "Comprehensive digital marketing strategies that increase your online visibility, drive traffic, and generate leads.",
-                icon: "📈",
-                link: "/services-overview#digital-marketing",
-              },
-              {
-                title: "E-commerce Website",
-                description:
-                  "Powerful e-commerce solutions that help you sell products and services online with secure payment processing.",
-                icon: "🛒",
-                link: "/services-overview#ecommerce-website",
-              },
-              {
-                title: "Domain & Hosting Services",
-                description:
-                  "Reliable domain registration and web hosting services that provide a solid foundation for your online presence.",
-                icon: "🔌",
-                link: "/services-overview#domain-hosting",
-              },
-              {
-                title: "Affordable Local SEO Services",
-                description:
-                  "Targeted local SEO strategies that help your business appear in local search results and attract nearby customers.",
-                icon: "🔍",
-                link: "/services-overview#local-seo",
-              },
-              {
-                title: "Buildings IT Network Infrastructure",
-                description:
-                  "Comprehensive IT network infrastructure solutions for buildings, ensuring reliable connectivity and performance.",
-                icon: "🏢",
-                link: "/services-overview#it-network-infrastructure",
-              },
-              {
-                title: "IT Products Supply and Service",
-                description:
-                  "Comprehensive IT product supply and service solutions for public and private organizations of all sizes.",
-                icon: "🖥️",
-                link: "/services-overview#it-products-supply",
-              },
-            ].map((service, index) => (
-              <div
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            {softwareCategories.map((category, index) => (
+              <Link
                 key={index}
-                className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100 flex flex-col h-full"
+                href={category.link}
+                className="group bg-white rounded-2xl p-6 border border-slate-200 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-100/50 transition-all duration-300 transform hover:-translate-y-1"
               >
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
-                <p className="text-gray-600 mb-4 flex-grow">{service.description}</p>
-                <Link
-                  href={service.link}
-                  className="text-emerald-500 font-medium flex items-center gap-1 hover:underline"
-                >
-                  Learn More <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <category.icon className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  {category.title}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {category.description}
+                </p>
+                <div className="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  Learn More <ArrowRight className="ml-1 w-4 h-4" />
+                </div>
+              </Link>
             ))}
           </div>
-          <div className="text-center mt-10">
-            <Link href="/services-overview">
-              <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-md">
-                View All Services
+
+          <div className="text-center mt-12">
+            <Link href="/products">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-xl">
+                View All Software
+                <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Products Section */}
-      <section className="py-16 bg-gray-50">
+      {/* ERP Modules Section */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Products</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Explore our range of 30+ innovative software products designed to streamline your business operations.
+          <div className="text-center mb-16">
+            <div className="inline-block bg-emerald-100 text-emerald-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+              Complete Solution
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Powerful ERP Modules
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Everything you need to run your business efficiently in one integrated platform
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product, index) => (
-              <Link
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {erpModules.map((module, index) => (
+              <div
                 key={index}
-                href={product.link}
-                className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow p-6"
+                className="group relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 hover:from-blue-50 hover:to-blue-100 transition-all duration-300 border border-slate-100 hover:border-blue-200"
               >
-                <h3 className="text-lg font-semibold mb-2 group-hover:text-emerald-500 transition-colors">
-                  {product.title}
-                </h3>
-                <p className="text-gray-600 text-sm">{product.description}</p>
-              </Link>
+                <div className="absolute top-4 right-4 w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ArrowRight className="w-4 h-4 text-blue-600" />
+                </div>
+                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
+                  <module.icon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-semibold text-slate-900 mb-2">{module.title}</h3>
+                <p className="text-sm text-slate-500">{module.description}</p>
+              </div>
             ))}
           </div>
-          <div className="text-center mt-10">
-            <Link href="/products">
-              <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-md">
-                View All Products
-              </Button>
-            </Link>
+        </div>
+      </section>
+
+      {/* Industries Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-block bg-white/10 text-white text-sm font-medium px-4 py-1.5 rounded-full mb-6 border border-white/20">
+              Our Expertise
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Industries We Serve
+            </h2>
+            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+              Tailored solutions for diverse industry requirements with deep domain expertise
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {industries.map((industry, index) => (
+              <div
+                key={index}
+                className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500 transition-colors">
+                  <industry.icon className="w-7 h-7 text-blue-300 group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="font-medium text-white">{industry.name}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-block bg-purple-100 text-purple-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+              Why Us
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Why Choose TECH LEADS BD
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Partner with us for reliable, scalable, and innovative business solutions
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {whyChooseUs.map((item, index) => (
+              <div
+                key={index}
+                className="group relative bg-white rounded-2xl p-8 border border-slate-200 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300"
+              >
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <item.icon className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">{item.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Key Features Section */}
+      <section className="py-20 bg-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-block bg-cyan-100 text-cyan-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+                Key Features
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
+                Everything You Need in One Platform
+              </h2>
+              <p className="text-lg text-slate-600 mb-8">
+                Our software is packed with features designed to streamline your business operations and boost productivity.
+              </p>
+
+              <div className="grid grid-cols-2 gap-6">
+                {keyFeatures.slice(0, 4).map((feature, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-5 h-5 text-cyan-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-slate-900">{feature.title}</h3>
+                      <p className="text-sm text-slate-500">{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/our-services">
+                <Button className="mt-8 bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg">
+                  Explore All Features
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {keyFeatures.slice(4, 8).map((feature, index) => (
+                <div
+                  key={index}
+                  className="group bg-white rounded-2xl p-6 border border-slate-200 hover:border-cyan-300 hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <feature.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-1">{feature.title}</h3>
+                  <p className="text-sm text-slate-500">{feature.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Clients Say</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Hear from our satisfied clients about their experience working with Tech Leads BD Ltd.
+          <div className="text-center mb-16">
+            <div className="inline-block bg-orange-100 text-orange-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+              Client Reviews
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              What Our Clients Say
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Hear from businesses that transformed their operations with our solutions
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((_, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-lg border border-gray-100">
-                <div className="flex items-center gap-0.5 mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
-                      key={star}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="text-yellow-400"
-                    >
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 italic">
-                  "Tech Leads BD delivered an exceptional software solution that has significantly improved our business
-                  operations. Their team was professional, responsive, and truly understood our needs."
-                </p>
-                <div className="flex items-center gap-4">
+
+          <div className="relative max-w-4xl mx-auto">
+            <div className="overflow-hidden">
+              <div
+                className="flex transition-transform duration-500"
+                style={{ transform: `translateX(-${activeTestimonial * 100}%)` }}
+              >
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className="w-full flex-shrink-0 px-4">
+                    <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-8 md:p-12 text-center">
+                      <div className="flex justify-center mb-6">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <Star key={i} className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+                        ))}
+                      </div>
+                      <blockquote className="text-xl md:text-2xl text-slate-700 mb-8 leading-relaxed">
+                        &ldquo;{testimonial.review}&rdquo;
+                      </blockquote>
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xl font-bold">
+                          {testimonial.name.charAt(0)}
+                        </div>
+                        <div className="text-left">
+                          <div className="font-semibold text-slate-900">{testimonial.name}</div>
+                          <div className="text-slate-500">{testimonial.business}</div>
+                          <div className="text-sm text-slate-400">{testimonial.location}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={() => setActiveTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-slate-50 transition-colors hidden md:flex"
+            >
+              <ChevronLeft className="w-6 h-6 text-slate-600" />
+            </button>
+            <button
+              onClick={() => setActiveTestimonial((prev) => (prev + 1) % testimonials.length)}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-slate-50 transition-colors hidden md:flex"
+            >
+              <ChevronRight className="w-6 h-6 text-slate-600" />
+            </button>
+
+            {/* Dots */}
+            <div className="flex justify-center gap-2 mt-8">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveTestimonial(index)}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    index === activeTestimonial ? "bg-blue-600" : "bg-slate-300"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Success Statistics Section */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-800">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <TrustCounter end={500} label="Happy Clients" />
+            <TrustCounter end={1200} label="Completed Projects" />
+            <TrustCounter end={10} label="Years Experience" suffix="+" />
+            <TrustCounter end={24} label="Support Available" suffix="/7" />
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Preview Section */}
+      <section className="py-20 bg-slate-50">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
+            <div>
+              <div className="inline-block bg-blue-100 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-full mb-4">
+                Latest Insights
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+                From Our Blog
+              </h2>
+            </div>
+            <Link href="/blog">
+              <Button variant="outline" className="mt-4 md:mt-0 border-slate-300 hover:border-blue-300 hover:text-blue-600">
+                View All Blogs
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {blogPosts.map((post, index) => (
+              <Link
+                key={index}
+                href="/blog"
+                className="group bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="/placeholder.svg?height=50&width=50"
-                    alt="Client"
-                    width={50}
-                    height={50}
-                    className="rounded-full"
+                    src={post.image}
+                    alt={post.title}
+                    width={400}
+                    height={200}
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div>
-                    <h4 className="font-semibold">John Smith</h4>
-                    <p className="text-sm text-gray-600">CEO, Tech Solutions Inc.</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
+                </div>
+                <div className="p-6">
+                  <div className="text-sm text-slate-500 mb-3">{post.date}</div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-slate-600 mb-4 line-clamp-2">{post.excerpt}</p>
+                  <div className="flex items-center text-blue-600 text-sm font-medium">
+                    Read More <ArrowRight className="ml-1 w-4 h-4" />
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-emerald-500 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Business?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Let's work together to create innovative solutions that drive your business forward.
+      <section className="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+        </div>
+
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+            Ready to Digitalize Your Business?
+          </h2>
+          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+            Join 500+ businesses already using TECH LEADS BD software to streamline operations and boost growth.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button className="bg-white text-emerald-500 hover:bg-gray-100 px-6 py-2 rounded-md">Get in Touch</Button>
-            <Button variant="outline" className="border-white text-white hover:bg-emerald-600 px-6 py-2 rounded-md">
-              View Our Work
-            </Button>
+            <Link href="/contact">
+              <Button size="lg" className="bg-white text-blue-900 hover:bg-blue-50 text-lg px-10 py-7 rounded-xl shadow-xl transition-all hover:scale-105">
+                Get Free Demo
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/contact">
+              <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 text-lg px-10 py-7 rounded-xl backdrop-blur-sm transition-all hover:scale-105">
+                Contact Us
+              </Button>
+            </Link>
+          </div>
+
+          <div className="mt-12 flex flex-wrap justify-center gap-8 text-blue-100">
+            <div className="flex items-center gap-2">
+              <Check className="w-5 h-5 text-green-400" />
+              <span>Free Consultation</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-5 h-5 text-green-400" />
+              <span>No Hidden Charges</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-5 h-5 text-green-400" />
+              <span>24/7 Support</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Social Media Floating Buttons */}
-      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-3 z-50">
-        <a
-          href="#"
-          className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-green-600 transition-colors"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-          </svg>
-        </a>
-        <a
-          href="#"
-          className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-blue-600 transition-colors"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M22.05 1.577c-.393-.016-.784.08-1.117.235-.484.186-4.92 1.902-9.41 3.64-2.26.873-4.518 1.746-6.256 2.415-1.737.67-3.045 1.168-3.114 1.192-.46.16-1.082.362-1.61.984-.133.155-.267.354-.335.628s-.038.622.095.895c.265.547.714.773 1.244.976.53.204 1.525.573 2.021.76.496.187 1.091.413 1.776.79.715.38 1.288 1.244 1.315 2.228.036 1.3-.023 2.43.102 3.022.125.593.326.999.7 1.25.373.25.624.142.924.07.3-.07.677-.244 1.27-.565.593-.32 1.685-1.03 3.45-2.317.567-.42.897-.862.897-1.45-.005-.267.033-.6.226-.92.192-.32.566-.705.968-1.09.4-.385.822-.79 1.24-1.194.425-.405.848-.81 1.25-1.195.4-.385.773-.77.97-1.092.197-.323.23-.653.23-.923 0-.592-.317-1.024-.87-1.448-.553-.424-1.332-.797-2.16-1.167-1.657-.736-3.652-1.464-5.638-2.196-1.986-.73-3.962-1.465-5.555-2.11-1.593-.647-2.797-1.19-3.04-1.344-.25-.155-.5-.44-.63-.76-.13-.32-.16-.68-.16-.76 0-.08.03-.44.16-.76.13-.32.38-.605.63-.76.243-.155 1.447-.697 3.04-1.345 1.593-.645 3.57-1.38 5.555-2.11 1.986-.732 3.98-1.46 5.638-2.196.828-.37 1.607-.743 2.16-1.168.553-.424.87-.856.87-1.448 0-.27-.033-.6-.23-.923-.197-.323-.57-.708-.97-1.092-.402-.385-.825-.79-1.25-1.193-.418-.404-.84-.81-1.24-1.195-.402-.385-.776-.77-.968-1.09-.193-.32-.23-.653-.226-.92.003-.59.333-1.03.9-1.45 1.765-1.287 2.857-1.997 3.45-2.318.593-.32.97-.494 1.27-.564.3-.07.55-.18.924.07.374.25.575.657.7 1.25.125.592.066 1.723.102 3.022.027.985.6 1.848 1.315 2.228.685.378 1.28.603 1.776.79.496.188 1.492.557 2.022.76.53.204.978.43 1.244.977.133.273.168.62.095.895s-.202.473-.335.628c-.528.622-1.15.824-1.61.985-.07.023-1.378.522-3.114 1.19-1.738.67-3.996 1.544-6.256 2.416-4.49 1.738-8.926 3.454-9.41 3.64-.333.156-.724.252-1.117.236-1.079-.043-1.853-1.043-1.853-1.043" />
-          </svg>
-        </a>
-      </div>
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/8801713636759"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors z-50 hover:scale-110 transform"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      </a>
     </div>
   )
 }

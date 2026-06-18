@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRef, useState } from "react"
 
@@ -33,11 +33,10 @@ function NavDropdown({ label, items, width = "w-48" }: NavDropdownProps) {
 
   return (
     <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <button className="flex items-center gap-1 font-medium text-gray-800 hover:text-emerald-600 transition-colors">
+      <button className="flex items-center gap-1 font-medium text-gray-800 hover:text-emerald-600 transition-colors text-sm">
         {label}
         <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
-      {/* invisible bridge fills the mt-2 gap so cursor doesn't leave the hover zone */}
       <div className="absolute left-0 top-full h-2 w-full" />
       <div
         className={`absolute left-0 top-full mt-2 ${width} bg-white shadow-lg rounded-md border border-gray-100 z-50 transition-all duration-150 ${
@@ -62,24 +61,19 @@ function NavDropdown({ label, items, width = "w-48" }: NavDropdownProps) {
   )
 }
 
-const aboutItems: DropdownItem[] = [
-  { href: "/about/company-profile", label: "Company Profile" },
-  { href: "/about/mission-vision", label: "Mission & Vision" },
-  { href: "/about/why-choose-us", label: "Why Choose Us" },
+const softwareItems: DropdownItem[] = [
+  { href: "/software/erp", label: "ERP Software" },
+  { href: "/software/pos", label: "POS Software" },
+  { href: "/software/accounting", label: "Accounting Software" },
+  { href: "/software/hr-payroll", label: "HR & Payroll" },
+  { href: "/software/crm", label: "CRM Software" },
+  { href: "/software/garments-erp", label: "Garments ERP" },
+  { href: "/software/hospital", label: "Hospital Management" },
+  { href: "/software/pharmacy", label: "Pharmacy Management" },
+  { href: "/software", label: "View All", highlight: true },
 ]
 
-const productItems: DropdownItem[] = [
-  { href: "/products/erp-solutions", label: "ERP Software" },
-  { href: "/products/pos-systems", label: "POS Software" },
-  { href: "/products/accounting-software", label: "Accounting Software" },
-  { href: "/products/hr-payroll", label: "HR Payroll Software" },
-  { href: "/products/crm-software", label: "CRM Software" },
-  { href: "/products/inventory-management", label: "Inventory Software" },
-  { href: "/products/hospital-management", label: "Hospital Management Software" },
-  { href: "/products", label: "View All Products →", highlight: true },
-]
-
-const serviceItems: DropdownItem[] = [
+const servicesItems: DropdownItem[] = [
   { href: "/services/custom-software", label: "Custom Software Development" },
   { href: "/services/erp-implementation", label: "ERP Implementation" },
   { href: "/services/pos-deployment", label: "POS Deployment" },
@@ -89,37 +83,64 @@ const serviceItems: DropdownItem[] = [
   { href: "/services/technical-support", label: "Technical Support" },
 ]
 
+const industriesItems: DropdownItem[] = [
+  { href: "/industries/retail", label: "Retail" },
+  { href: "/industries/wholesale", label: "Wholesale" },
+  { href: "/industries/garments", label: "Garments" },
+  { href: "/industries/pharmacy", label: "Pharmacy" },
+  { href: "/industries/super-shop", label: "Super Shop" },
+  { href: "/industries/manufacturing", label: "Manufacturing" },
+  { href: "/industries/electronics", label: "Electronics" },
+  { href: "/industries/services", label: "Services" },
+]
+
 export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
-    <>
-      <div className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-4 text-center">
-        <div className="container mx-auto flex justify-center items-center gap-2">
-          <span>✨ Transform Your Business with AI-Powered Solutions - Limited Time Offer!</span>
-          <Button size="sm" className="bg-white hover:bg-gray-100 text-purple-600 font-medium rounded-md">
-            Get Started
-          </Button>
-        </div>
-      </div>
-      <header className="w-full bg-white py-4 px-4 border-b">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-1">
-            <Image src="/logo.svg" alt="Tech Leads BD Ltd Logo" width={150} height={50} className="h-12 w-auto" />
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300">
+      <div className="container mx-auto px-4 h-16 flex justify-between items-center">
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.svg" alt="Tech Leads BD Ltd Logo" width={150} height={50} className="h-10 w-auto" />
+        </Link>
+
+        <nav className="hidden lg:flex items-center gap-6">
+          <Link href="/" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors text-sm">
+            Home
           </Link>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors">
-              Home
-            </Link>
-            <NavDropdown label="About Us" items={aboutItems} />
-            <NavDropdown label="Products" items={productItems} width="w-56" />
-            <NavDropdown label="Services" items={serviceItems} width="w-56" />
-            <Link href="/blog" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors">
-              Blog
-            </Link>
-            <Link href="/contact" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors">
-              Contact Us
-            </Link>
-          </nav>
-          <button className="md:hidden">
+          <Link href="/about" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors text-sm">
+            About
+          </Link>
+          <NavDropdown label="Software" items={softwareItems} width="w-56" />
+          <NavDropdown label="Services" items={servicesItems} width="w-56" />
+          <NavDropdown label="Industries" items={industriesItems} width="w-48" />
+          <Link href="/blog" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors text-sm">
+            Blog
+          </Link>
+          <Link href="/pricing" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors text-sm">
+            Pricing
+          </Link>
+          <Link href="/contact" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors text-sm">
+            Contact
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <a
+            href="https://wa.me/8801713636759"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors"
+          >
+            <MessageCircle className="h-5 w-5" />
+          </a>
+          <Button className="hidden md:inline-flex bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium rounded-lg px-5 py-2.5 transition-all duration-300 shadow-md hover:shadow-lg">
+            Get Demo
+          </Button>
+          <button
+            className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -132,13 +153,58 @@ export default function Header() {
               strokeLinejoin="round"
               className="text-gray-800"
             >
-              <line x1="4" x2="20" y1="12" y2="12" />
-              <line x1="4" x2="20" y1="6" y2="6" />
-              <line x1="4" x2="20" y1="18" y2="18" />
+              {mobileMenuOpen ? (
+                <>
+                  <line x1="18" x2="6" y1="6" y2="18" />
+                  <line x1="6" x2="18" y1="6" y2="18" />
+                </>
+              ) : (
+                <>
+                  <line x1="4" x2="20" y1="12" y2="12" />
+                  <line x1="4" x2="20" y1="6" y2="6" />
+                  <line x1="4" x2="20" y1="18" y2="18" />
+                </>
+              )}
             </svg>
           </button>
         </div>
-      </header>
-    </>
+      </div>
+
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-100 py-4 px-4">
+          <nav className="flex flex-col gap-3">
+            <Link href="/" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              Home
+            </Link>
+            <Link href="/about" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              About
+            </Link>
+            <Link href="/software" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              Software
+            </Link>
+            <Link href="/services" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              Services
+            </Link>
+            <Link href="/industries" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              Industries
+            </Link>
+            <Link href="/blog" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              Blog
+            </Link>
+            <Link href="/pricing" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              Pricing
+            </Link>
+            <Link href="/contact" className="font-medium text-gray-800 hover:text-emerald-600 transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>
+              Contact
+            </Link>
+            <div className="flex gap-3 pt-3 border-t border-gray-100">
+              <Button className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium rounded-lg">
+                Get Demo
+              </Button>
+            </div>
+          </nav>
+        </div>
+      )}
+    </header>
   )
 }
